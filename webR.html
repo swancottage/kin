@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebR: Research Toolkit</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 2em auto; padding: 0 1em; background-color: #f8f9fa; color: #333; }
+        .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2, h3 { color: #003d7a; }
+        textarea { width: 100%; height: 80px; font-family: 'Courier New', monospace; border: 1px solid #ccc; border-radius: 4px; padding: 10px; box-sizing: border-box; }
+        button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        button:disabled { background: #6c757d; cursor: wait; }
+        button.plot-btn { background: #28a745; }
+        .output { background: #eee; padding: 10px; border-radius: 4px; min-height: 20px; margin-top: 10px; font-family: monospace; white-space: pre-wrap; }
+        #plot-output { text-align: center; margin-top: 15px; }
+        #plot-output img { max-width: 100%; border: 1px solid #ddd; display: none; }
+        .status { font-weight: bold; color: #d9534f; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>WebR Clinical Data Sandbox</h2>
+    <div id="status" class="status">Status: Loading R (WebAssembly)...</div>
+
+    <div class="card">
+        <h3>1. Data Generation</h3>
+        <p>Generate $n=50$, $\mu=60$, $\sigma=10$.</p>
+        <button id="genBtn" disabled>Generate 50 Random Numbers</button>
+        <div id="genOutput" class="output">No data generated yet.</div>
+    </div>
+
+    <div class="card">
+        <h3>2. Custom R Console</h3>
+        <textarea id="rCode">summary(my_data)</textarea>
+        <button id="runCodeBtn" disabled>Run Custom Code</button>
+        <div id="codeOutput" class="output">Result will appear here...</div>
+    </div>
+
+    <div class="card">
+        <h3>3. Data Visualization</h3>
+        <button id="plotBtn" class="plot-btn" disabled>Generate Histogram</button>
+        <div id="plot-output">
+            <img id="histImage" alt="R Plot">
+        </div>
+    </div>
+
+    <script type="module">
+        //import { WebR } from 'https://webr.r-wasm.org/latest/webr.mjs';
+        //const webR = new WebR();
+        
+        import { WebR } from './webR/webr.mjs';
+        const webR = new WebR({
+            // Tell WebR exactly where to find its worker and wasm files
+            baseUrl: './webR/' ,
+            channelType: 0 // 0 = PostMessage (No special headers needed!)
+        });
+        
+        
+        const status = document.getElementById('status');
+        const buttons = document.querySelectorAll('button');
+
+        // Initializing WebR
+        async function init() {
+            await webR.init();
+            status.innerText = "Status: R Ready ✅";
+            status.style.color = "#28a745";
+            buttons.forEach(btn => btn.disabled = false);
+            
+            // Pre-initialize a global variable in R to hold our data
+            await webR.evalR("my_data <- numeric(0)");
+        }
+
+        // Logic 1: Generate Data
+        document.getElementById('genBtn').onclick = async () => {
+            const code = `
+                my_data <- rnorm(50, mean = 60, sd = 10)
+                print(my_data)
+            `;
+            const result = await webR.evalR(code);
+            const output = await result.toJs();
+            document.getElementById('genOutput').innerText = output.values.join(", ");
+        };
+
+        // Logic 2: Custom Code
+        document.getElementById('runCodeBtn').onclick = async () => {
+            const userCode = document.getElementById('rCode').value;
+            try {
+                const result = await webR.evalR(userCode);
+                const output = await result.toJs();
+                document.getElementById('codeOutput').innerText = output.values ? output.values.join("\n") : "Executed successfully.";
+            } catch (e) {
+                document.getElementById('codeOutput').innerText = "Error: " + e.message;
+            }
+        };
+
+       // 3. Plotting Logic (The Fix)
+        document.getElementById('plotBtn').onclick = async () => {
+            const plotCode = `
+                tmp <- tempfile(fileext = ".png")
+                png(tmp, width = 800, height = 600, res = 120)
+                if(length(my_data) > 0) {
+                    hist(my_data, col = "skyblue", border = "white", 
+                         main = "Sample Distribution (n=50)", xlab = "Value")
+                } else {
+                    plot.new(); text(0.5, 0.5, "Please generate data first!")
+                }
+                dev.off()
+                readBin(tmp, "raw", file.info(tmp)$size)
+            `;
+
+            try {
+                const result = await webR.evalR(plotCode);
+                const rawBytes = await result.toJs(); // Get raw array [137, 80, ...]
+
+                // CRITICAL FIX: The array MUST be converted explicitly to a Uint8Array
+                // so the Blob constructor treats it as raw bytes for an image file.
+                const uint8Array = new Uint8Array(rawBytes.values);
+                
+                const blob = new Blob([uint8Array], { type: 'image/png' });
+                const url = URL.createObjectURL(blob);
+                
+                const img = document.getElementById('histImage');
+                img.src = url;
+                img.style.display = "block"; // Show the plot
+
+            } catch (plotError) {
+                console.error("Plotting failure:", plotError);
+                // Simple feedback that the process failed
+                alert(`Plot generation failed in R. Check console for details. Error: ${plotError.message}`);
+            }
+        };
+
+        init();
+    </script>
+</body>
+</html>
