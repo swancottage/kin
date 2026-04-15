@@ -1,0 +1,43 @@
+body {
+    /* Priority to Thai Serif, falling back to standard Serif */
+    font-family: 'Noto Serif Thai', 'Noto Serif', 'Georgia', serif;
+    
+    /* Thai Serif needs a bit more space (1.9) to prevent vowel collisions */
+    line-height: 1.9;
+    
+    /* Slightly larger base size (18px) makes Serif look much more modern */
+    font-size: 18px;
+    
+    color: var(--text);
+    background-color: var(--bg);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Headings look stunning in Noto Serif Thai Bold */
+h1, h2, h3 {
+    font-family: 'Noto Serif Thai', serif;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.4;
+    margin-top: 2.5rem;
+    margin-bottom: 1.2rem;
+}
+
+/* Special touch for your "Artist" side: 
+   Serif fonts look great with a slightly wider margin for quotes */
+blockquote {
+    border-left: 3px solid var(--primary);
+    padding-left: 1.5rem;
+    font-style: italic;
+    color: #475569;
+    margin: 2rem 0;
+}
+
+/* Calculator specific adjustments for Serif */
+input, button {
+    font-family: inherit; /* Ensures the font carries into the app */
+}
