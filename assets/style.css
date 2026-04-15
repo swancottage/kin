@@ -15,26 +15,33 @@ body {
     /* Thai Serif needs a bit more space (1.9) to prevent vowel collisions */
     line-height: 1.9;
     
-    /* Slightly larger base size (18px) makes Serif look much more modern */
-    font-size: 18px;
+    /*  */
+    font-size: clamp(0.7rem, 0.5vw + 0.7rem, 1.2rem);
     
     color: var(--text);
     background-color: var(--bg);
-    margin: 0;
+    margin: 0rem;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
 }
 
+main {
+    padding: 0.5em 1em; 
+}
+
 h1, h2, h3 {
-    font-family: 'Noto Serif Thai', serif;
+    font-family: 'Noto Sans Thai', sans-serif;
     font-weight: 700;
     color: #0f172a;
     line-height: 1.4;
     margin-top: 2.5rem;
     margin-bottom: 1.2rem;
 }
+h1 {font-size: 1.6em;}
+h2 {font-size: 1.4em;}
+h3 {font-size: 1.2em;}
 
 blockquote {
     border-left: 3px solid var(--primary);
@@ -78,13 +85,121 @@ button:hover { opacity: 0.9; }
     margin-top: 1rem;
 }
 
+
+
+
+
+/* 1. Header & Nav Structure */
+header {
+    font-family: 'Noto Sans Thai', sans-serif;
+    padding: 0.5em 1em;
+    background-color: lightskyblue;
+}
+
+header nav {
+    display: flex;
+    flex-direction: column; /* Forces the Menu Card to the new line */
+    align-items: flex-start; /* Keeps logo/greeting to the left */
+}
+
+/* 2. Logo & Greeting Row */
+.site-brand a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--text);
+}
+
+.site-brand img {
+    width: 32px; /* Small Logo */
+    height: 32px;
+    border-radius: 50%; /* Optional: circular artist vibe */
+}
+
+.site-brand strong {
+    font-size: 0.9rem;
+    font-weight: 700;
+    align-self: end;
+    letter-spacing: -0.01em;
+}
+
+/* 1. Reset the nav container */
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0; /* Vertical breathing room */
+    display: flex;
+    gap: 8px; /* Space between each card */
+    width: 100%;
+    flex-wrap:wrap;
+    
+    /* THE TRICK: Horizontal scroll if the screen is too narrow */
+    overflow-x: auto; 
+    white-space: nowrap; /* Prevents wrapping to new lines */
+    
+    /* Hide scrollbar for a cleaner "Artist" look (Optional) */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.nav-links::-webkit-scrollbar {
+    display: none;
+}
+
+/* 2. Style each list item as a standalone Card */
+.nav-links li {
+    flex: 0 0 auto; /* Don't shrink, don't grow, stay as wide as text needs */
+}
+
+.nav-links li a {
+    display: block;
+    padding: 0.1em 0.5em;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 20px; /* "Pill" card shape - very modern */
+    text-decoration: none;
+    font-size: 0.85rem;
+    color: #64748b;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+}
+
+/* 3. States */
+.nav-links li a:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.nav-links li a.active {
+    background-color: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+    font-weight: 500;
+}
+
+
+
+
+
+
+
+
+
 footer {
+    font-family: 'Noto Sans Thai', sans-serif;
     margin-top: auto; /* Pushes footer to bottom */
     padding-top: 3rem;
     padding-bottom: 2rem;
-    font-size: 0.875rem;
+    font-size: 0.6rem;
     color: #64748b;
     text-align: center;
+}
+
+.footer-info p {
+    line-height: 0.5em;
+    margin-bottom: 1em;
 }
 
 
