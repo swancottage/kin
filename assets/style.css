@@ -1,3 +1,13 @@
+:root {
+    --gap: 1.5rem;
+    --container-width: 720px; /* Perfect for reading speed */
+    --bg: #fdfdfd;
+    --text: #334155;
+    --primary: #2563eb; /* Trustworthy Blue */
+    --accent: #f59e0b;  /* Warm Amber for "The Walk" */
+    --border: #e2e8f0;
+}
+
 body {
     /* Priority to Thai Serif, falling back to standard Serif */
     font-family: 'Noto Serif Thai', 'Noto Serif', 'Georgia', serif;
@@ -17,7 +27,6 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Headings look stunning in Noto Serif Thai Bold */
 h1, h2, h3 {
     font-family: 'Noto Serif Thai', serif;
     font-weight: 700;
@@ -27,8 +36,6 @@ h1, h2, h3 {
     margin-bottom: 1.2rem;
 }
 
-/* Special touch for your "Artist" side: 
-   Serif fonts look great with a slightly wider margin for quotes */
 blockquote {
     border-left: 3px solid var(--primary);
     padding-left: 1.5rem;
@@ -37,7 +44,55 @@ blockquote {
     margin: 2rem 0;
 }
 
-/* Calculator specific adjustments for Serif */
+p { margin-bottom: 1.5rem; }
+
 input, button {
-    font-family: inherit; /* Ensures the font carries into the app */
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    width: 100%; /* Mobile friendly */
+    margin-bottom: 1rem;
+}
+
+input {
+    border: 1px solid var(--border);
+    background: #f8fafc;
+}
+
+button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+button:hover { opacity: 0.9; }
+
+#result {
+    padding: 1rem;
+    background: #eff6ff;
+    border-left: 4px solid var(--primary);
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+footer {
+    margin-top: auto; /* Pushes footer to bottom */
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+    font-size: 0.875rem;
+    color: #64748b;
+    text-align: center;
+}
+
+
+.card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin: 2rem 0;
 }
